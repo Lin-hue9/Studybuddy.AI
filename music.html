@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Focus Mode Playlist</title>
+</head>
+<body>
+    <h1>Focus Mode Playlist</h1>
+    {% if tracks %}
+        <ul>
+            {% for track in tracks %}
+                <li>
+                    <strong>{{ track }}</strong><br>
+                    <audio controls>
+                        <source src="{{ url_for('static', filename='music/' ~ track) }}" type="audio/mp3">
+                        Your browser does not support the audio element.
+                    </audio>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No tracks found.</p>
+    {% endif %}
+</body>
+</html>

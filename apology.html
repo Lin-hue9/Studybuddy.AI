@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 40vh;">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height:70px; margin-bottom:20px;">
+    <div class="alert alert-danger text-center" style="max-width: 500px;">
+        <h2 class="mb-3" style="color:#4F759B;">Oops!</h2>
+        <p class="lead mb-2">{{ message }}</p>
+        <a href="/" class="btn btn-primary mt-2">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar: user's groups -->
+        <div class="col-md-3 d-none d-md-block bg-white border-right">
+            <h5 class="mb-3 mt-3" style="color:#4F759B;">My Study Groups</h5>
+            <ul class="list-group">
+                {% for group in user_groups %}
+                <li class="list-group-item {% if group.id == active_group.id %}active{% endif %}">
+                    <a href="/group/{{ group.id }}" class="text-dark">{{ group.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            <a href="/groups" class="btn btn-outline-primary btn-block mt-3">All Groups</a>
+        </div>
+        <!-- Main chat area -->
+        <div class="col-md-6">
+            <div class="chat-header px-4 py-2 bg-light d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <strong>{{ active_group.name }}</strong>
+                </div>
+            </div>
+            <div class="chat-body p-4" style="background:#F8FAFC; height:60vh; overflow-y:auto;">
+                {% for msg in messages %}
+                <div class="mb-3">
+                    <strong>{{ msg.username }}:</strong>
+                    {{ msg.content }}
+                    {% if msg.media_url %}
+                        <br>
+                        <img src="{{ msg.media_url }}" style="max-width:120px;">
+                    {% endif %}
+                    <br><small class="text-muted">{{ msg.created_at }}</small>
+                </div>
+                {% else %}
+                <div class="text-muted">No messages yet. Start the conversation!</div>
+                {% endfor %}
+            </div>
+            <!-- Message input with file upload -->
+            <form action="/group/{{ active_group.id }}" method="post" enctype="multipart/form-data" class="chat-input p-3 bg-white border-top">
+                <input name="content" class="form-control d-inline w-75" placeholder="Type a message..." >
+                <input type="file" name="media" class="form-control-file d-inline w-25" accept="image/*,video/*">
+                <button class="btn btn-primary ml-2" type="submit">Send</button>
+            </form>
+            <!-- Video Call Button -->
+            <div class="text-center mt-2">
+                <a href="https://meet.jit.si/{{ active_group.name|replace(' ', '')|lower }}"
+                   target="_blank" class="btn btn-outline-primary btn-lg animate__animated animate__pulse">
+                    📹 Start Video Call
+                </a>
+            </div>
+        </div>
+        <!-- Events Sidebar -->
+        <div class="col-md-3 d-none d-md-block bg-white border-left">
+            <h6 class="mt-4">Upcoming Events</h6>
+            <ul>
+                {% for event in group_events %}
+                <li>
+                    <strong>{{ event.title }}</strong><br>
+                    <small>{{ event.event_datetime[:16] }}</small>
+                    <br><small>{{ event.description }}</small>
+                </li>
+                {% else %}
+                <li class="text-muted">No upcoming events.</li>
+                {% endfor %}
+            </ul>
+            <form action="/group/{{ active_group.id }}" method="post" class="mt-2">
+                <input name="event_title" class="form-control mb-1" placeholder="Event Title" required>
+                <input name="event_datetime" class="form-control mb-1" type="datetime-local" required>
+                <textarea name="event_description" class="form-control mb-1" placeholder="Description"></textarea>
+                <button class="btn btn-info btn-sm btn-block" type="submit">+ Add Event</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+You

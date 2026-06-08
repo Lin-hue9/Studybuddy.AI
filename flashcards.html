@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block main %}
+<h2>Practice Flashcards</h2>
+<form method="get" action="/flashcards" class="mb-3">
+    <label for="set"><b>Choose a subject:</b></label>
+    <select name="set" id="set" class="form-control w-auto d-inline">
+        {% for s in sets %}
+        <option value="{{ s }}" {% if s == chosen %}selected{% endif %}>{{ s|capitalize }}</option>
+        {% endfor %}
+    </select>
+    <button class="btn btn-info btn-sm" type="submit">Switch Set</button>
+</form>
+<div class="card mx-auto" style="max-width:500px;">
+    <div class="card-body text-center">
+        <h4>Q: {{ question.question }}</h4>
+        {% if feedback %}
+            <div class="alert {% if correct %}alert-success{% else %}alert-danger{% endif %} mt-2">
+                {{ feedback|safe }}
+            </div>
+        {% endif %}
+        {% if not correct %}
+        <form action="/flashcards" method="post" class="mt-2">
+            <input type="hidden" name="set" value="{{ chosen }}">
+            <input name="answer" placeholder="Your answer" class="form-control mb-2" type="text" required value="{{ user_answer }}">
+            <button class="btn btn-primary" type="submit">Check</button>
+        </form>
+        {% endif %}
+        {% if correct and show_next %}
+            <form action="/flashcards?set={{ chosen }}" method="get" class="mt-2">
+                <button class="btn btn-success" type="submit">Next Question</button>
+            </form>
+        {% elif not correct and feedback %}
+            <form action="/flashcards?set={{ chosen }}" method="get" class="mt-2">
+                <button class="btn btn-secondary" type="submit">Move On</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="container py-4">
+    <h2 class="mb-4" style="color:#4F759B;">Study Groups</h2>
+    <a href="/create_group" class="btn btn-primary mb-3">+ New Group</a>
+    <h4>Your Groups</h4>
+    <ul class="list-group mb-4">
+        {% for group in user_groups %}
+        <li class="list-group-item d-flex align-items-center">
+            <a href="/group/{{ group.id }}">{{ group.name }}</a>
+            <span class="ml-3 text-muted">{{ group.description }}</span>
+        </li>
+        {% else %}
+        <li class="list-group-item">You haven't joined any groups yet.</li>
+        {% endfor %}
+    </ul>
+    <h4>All Groups</h4>
+    <ul class="list-group">
+        {% for group in all_groups %}
+        <li class="list-group-item d-flex align-items-center justify-content-between">
+            <div>
+                <span style="font-weight:600;">{{ group.name }}</span>
+                <span class="ml-2 text-muted">{{ group.description }}</span>
+            </div>
+            <form action="/join_group" method="post" class="mb-0">
+                <input type="hidden" name="group_id" value="{{ group.id }}">
+                <button class="btn btn-sm btn-success" type="submit">Join</button>
+            </form>
+            <a class="btn btn-sm btn-info ml-2" href="/group/{{ group.id }}">View</a>
+        </li>
+        {% else %}
+        <li class="list-group-item">No groups available.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

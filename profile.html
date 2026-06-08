@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="container py-4 text-center">
+    <img src="{{ user.avatar_url or url_for('static', filename='default-avatar.png') }}" alt="Avatar" class="rounded-circle mb-2" style="height:100px;">
+    <h2>{{ user.username }}</h2>
+    <form action="/profile" method="post" enctype="multipart/form-data" class="mb-3">
+        <input type="file" name="avatar" class="form-control-file" accept="image/*">
+        <button type="submit" class="btn btn-info mt-2">Upload New Avatar</button>
+    </form>
+    <a href="/" class="btn btn-primary mt-2">Back to Dashboard</a>
+</div>
+{% endblock %}

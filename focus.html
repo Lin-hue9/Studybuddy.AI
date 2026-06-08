@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="container" style="max-width:650px;">
+  <div class="card glass-bg mt-4">
+    <div class="card-body text-center">
+      <h2 class="mb-4" style="color:#4F759B;">Focus Mode 🎧</h2>
+      <form method="get" action="/focus" class="mb-3">
+        <label for="track"><b>Choose your focus music:</b></label>
+        <select name="track" id="track" class="form-control w-75 mx-auto mb-2" style="display:inline-block;">
+          {% for track in playlist %}
+            <option value="{{ track.url }}" {% if track.url == selected_track %}selected{% endif %}>
+              {{ track.title }}
+            </option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm">Play</button>
+      </form>
+      <audio controls autoplay loop style="width:100%;">
+        <source src="{{ selected_track or playlist[0].url }}" type="audio/mp3">
+        Your browser does not support the audio element.
+      </audio>
+      <div class="mt-4">
+        <p class="text-muted">Stay focused and enjoy your study session!</p>
+      </div>
+      <hr>
+      <h5 class="mb-2">All Available Tracks</h5>
+      <ul class="list-group">
+        {% for track in playlist %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ track.title }}</span>
+            <audio controls style="width:180px;">
+              <source src="{{ track.url }}" type="audio/mp3">
+            </audio>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

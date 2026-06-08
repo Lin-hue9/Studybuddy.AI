@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="card mx-auto" style="max-width: 500px;">
+  <div class="card-body">
+    <h2 class="card-title text-center" style="color:#4F759B;">Personalize Your StudyBuddy</h2>
+    <form action="/onboarding_quiz" method="post">
+      <div class="mb-3">
+        <label><strong>What's your main study goal?</strong></label>
+        <select name="goal" class="form-control" required>
+          <option value="" disabled selected>Select a goal...</option>
+          <option>Exam prep</option>
+          <option>Homework help</option>
+          <option>Project collaboration</option>
+          <option>General learning</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label><strong>How do you like to study?</strong></label>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="flashcards" value="1" id="flashcards">
+          <label class="form-check-label" for="flashcards">Flashcards</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="reading" value="1" id="reading">
+          <label class="form-check-label" for="reading">Reading</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="practice" value="1" id="practice">
+          <label class="form-check-label" for="practice">Practice problems</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="videos" value="1" id="videos">
+          <label class="form-check-label" for="videos">Videos</label>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label><strong>What's your hardest subject or toughest challenge?</strong></label>
+        <input class="form-control" name="subject" placeholder="e.g. Math, Spanish, Focus, etc." required>
+      </div>
+      <button class="btn btn-success btn-block" type="submit">Finish</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

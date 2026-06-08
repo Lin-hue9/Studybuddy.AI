@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block main %}
+<h2>Register</h2>
+<form action="/register" method="post">
+    <input name="username" placeholder="Username" class="form-control mb-2" type="text" required>
+    <input name="password" placeholder="Password" class="form-control mb-2" type="password" required>
+    <input name="confirmation" placeholder="Password (again)" class="form-control mb-2" type="password" required>
+    <button class="btn btn-primary" type="submit">Register</button>
+</form>
+{% endblock %}

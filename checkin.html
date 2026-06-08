@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block main %}
+<h2>Mood Check-In</h2>
+<form action="/checkin" method="post">
+    <div class="form-group">
+        <label for="mood">Mood (1-10):</label>
+        <input type="number" name="mood" min="1" max="10" class="form-control w-auto" required>
+    </div>
+    <div class="form-group">
+        <label for="note">Note (optional):</label>
+        <textarea name="note" class="form-control"></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit">Add Check-In</button>
+</form>
+{% endblock %}

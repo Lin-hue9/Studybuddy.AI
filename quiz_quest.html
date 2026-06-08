@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="container my-4">
+  <h2 class="mb-3">Quiz Quest 🧑 Cat Customize 💰 Coins: <span id="coins">0</span></h2>
+  <div id="game-board"></div>
+  <div id="controls" style="text-align:center;">
+    <button onclick="move(0,-1)">⬆️</button>
+    <button onclick="move(-1,0)">⬅️</button>
+    <button onclick="move(0,1)">⬇️</button>
+    <button onclick="move(1,0)">➡️</button>
+  </div>
+  <div id="quiz-modal" style="display:none; position:fixed;top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.55); align-items:center; justify-content:center;z-index:99;">
+    <div id="quiz-content" style="background:#fff;padding:30px;border-radius:12px;max-width:340px;text-align:center; margin:auto;">
+      <div id="quiz-question"></div>
+      <div id="quiz-choices"></div>
+      <button onclick="closeQuiz()" style="display:none;" id="quiz-close">Close</button>
+    </div>
+  </div>
+</div>
+<script>
+const size = 5;
+let player = { x: 2, y: 2, icon: "🐱" };
+let coins = 0;
+const monsters = [
+  { x: 0, y: 0, icon: "👾", subject: "math" },
+  { x: 4, y: 1, icon: "🧪", subject: "science" },
+  { x: 1, y: 3, icon: "📜", subject: "history" },
+  { x: 3, y: 4, icon: "📚", subject: "english" }
+];
+const quizBank = {
+  "math": [
+    {q: "What is 2+2?", a: ["3","4","5"], correct: "4"},
+    {q: "Area of circle?", a: ["πr²","2πr","r²"], correct: "πr²"}
+  ],
+  "science": [
+    {q: "What planet is the Red Planet?", a: ["Earth","Mars","Venus"], correct: "Mars"},
+    {q: "Symbol for water?", a: ["O2","CO2","H2O"], correct: "H2O"}
+  ],
+  "history": [
+    {q: "Who was the first US president?", a: ["Lincoln","Washington","Adams"], correct: "Washington"},
+    {q: "The Renaissance started in?", a: ["France","Italy","England"], correct: "Italy"}
+  ],
+  "english": [
+    {q: "Author of Hamlet?", a: ["Shakespeare","Dickens","Austen"], correct: "Shakespeare"},
+    {q: "A simile uses?", a: ["like/as","rhyme","none"], correct: "like/as"}
+  ]
+};
+function drawBoard() {
+  let html = '<div style="display:grid;grid-template:repeat(5,60px)/repeat(5,60px);gap:4px;width:320px;background:#d0e7e2;border-radius:12px;margin:30px auto;">';
+  for (let y=0; y<size; y++) {
+    for (let x=0; x<size; x++) {
+      let classes = "tile";
+      let contents = "";
+      if (player.x === x && player.y === y) {
+        classes += " player";
+        contents = player.icon;
+      } else {
+        let monster = monsters.find(m => m.x === x && m.y === y);
+        if (monster) {
+          classes += " monster";
+          contents = monster.icon;
+        }
+      }
+      html += `<div class="${classes}" style="width:60px;height:60px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:2em;border-radius:8px;">${contents}</div>`;
+    }
+  }
+  html += "</div>";
+  document.getElementById('game-board').innerHTML = html;
+  document.getElementById('coins').textContent = coins;
+}
+function move(dx,dy) {
+  let nx = player.x + dx;
+  let ny = player.y + dy;
+  if (nx < 0 || nx >= size || ny < 0 || ny >= size) return;
+  player.x = nx; player.y = ny;
+  let monster = monsters.find(m => m.x === nx && m.y === ny);
+  if (monster) {
+    showQuiz(monster.subject, monster);
+  }
+  drawBoard();
+}
+function showQuiz(subject, monster) {
+  const qs = quizBank[subject];
+  const q = qs[Math.floor(Math.random()*qs.length)];
+  document.getElementById('quiz-modal').style.display = "flex";
+  document.getElementById('quiz-question').textContent = q.q;
+  let choices = "";
+  q.a.forEach(ans => {
+    choices += `<button onclick="answerQuiz('${ans}','${q.correct}',${monster.x},${monster.y})">${ans}</button><br>`;
+  });
+  document.getElementById('quiz-choices').innerHTML = choices;
+  document.getElementById('quiz-close').style.display = "none";
+}
+function answerQuiz(ans, correct, mx, my) {
+  let result;
+  if (ans === correct) {
+    result = `<span style="color:green;">Correct! +1 coin</span>`;
+    coins++;
+    const idx = monsters.findIndex(m => m.x===mx && m.y===my);
+    if (idx >= 0) monsters.splice(idx,1);
+  } else {
+    result = `<span style="color:red;">Incorrect. Try again next time!</span>`;
+  }
+  document.getElementById('quiz-question').innerHTML = result;
+  document.getElementById('quiz-choices').innerHTML = "";
+  document.getElementById('quiz-close').style.display = "inline-block";
+  drawBoard();
+}
+function closeQuiz() {
+  document.getElementById('quiz-modal').style.display = "none";
+}
+drawBoard();
+</script>
+{% endblock %}

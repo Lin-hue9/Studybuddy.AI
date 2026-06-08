@@ -1,0 +1,317 @@
+{% extends "layout.html" %}
+{% block main %}
+<div id="dashboard-content" class="container-fluid" style="opacity:0; transform:translateY(32px); transition: opacity .8s, transform .8s;">
+  <div class="row">
+    <!-- Sidebar: Mascot & Navigation -->
+    <nav class="col-md-2 d-none d-md-block bg-white border-right pt-4 sidebar" style="min-width:210px;">
+      <div class="text-center mt-2 mb-4">
+        <img src="{{ url_for('static', filename='Mascot.png') }}" alt="Mascot" style="height:90px;">
+      </div>
+      <ul class="nav flex-column mb-4" style="font-size: 1.13em; font-weight: 600;">
+        <li class="nav-item"><a href="/" class="nav-link"><span style="font-size:1.1em;">🏠</span> Dashboard</a></li>
+        <li class="nav-item"><a href="/anglealchemy" class="nav-link"><span style="font-size:1.2em;">🌳</span> AngleAlchemy</a></li>
+        <li class="nav-item"><a href="/quizquest" class="nav-link"><span style="font-size:1.2em;">🎮</span> Quiz Quest</a></li>
+        <li class="nav-item"><a href="/groups" class="nav-link"><span style="font-size:1.2em;">👥</span> Groups</a></li>
+        <li class="nav-item"><a href="/focus" class="nav-link"><span style="font-size:1.2em;">⏱</span> Focus</a></li>
+        <li class="nav-item"><a href="/flashcards" class="nav-link"><span style="font-size:1.2em;">📇</span> Flashcards</a></li>
+        <li class="nav-item"><a href="/videos" class="nav-link"><span style="font-size:1.2em;">📺</span> Tutorials</a></li>
+        <li class="nav-item"><a href="/profile" class="nav-link"><span style="font-size:1.2em;">🙍</span> Profile</a></li>
+      </ul>
+      <button class="btn btn-info btn-block mt-2">+ New Group</button>
+      <div class="mt-4">
+        {% for group in user_groups %}
+        <img src="{{ group.avatar_url or url_for('static', filename='default-avatar.png') }}" class="rounded-circle mr-1" style="height:30px;">
+        {% endfor %}
+      </div>
+    </nav>
+
+    <!-- Main Dashboard Area -->
+    <main class="col-md-7">
+      <!-- Hero Section: AngleAlchemy & Quiz Quest -->
+      <div class="card glass-bg p-4 mb-4 text-center">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height:55px;">
+        <h1 class="mt-2" style="color:#4F759B; font-weight:700; font-size:2.1rem;">Hi, {{ session.get('username') }}!</h1>
+        <h5 class="text-muted mb-3">Welcome to your study adventure!</h5>
+        <div class="mb-2">
+          <a href="/anglealchemy" class="btn btn-lg btn-success mx-1 mb-2" style="font-size:1.15em;">
+            🧙‍♂️ Play AngleAlchemy!
+          </a>
+          <a href="/quizquest" class="btn btn-secondary mx-1 mb-2" style="font-size:1.1em;">
+            🎮 Quick Quiz Quest!
+          </a>
+          <a href="/add_task" class="btn btn-success mx-1 mb-2">+ Add Task</a>
+          <a href="/focus" class="btn btn-primary mx-1 mb-2">Focus Mode</a>
+          <a href="/flashcards" class="btn btn-warning mx-1 mb-2">Flashcards</a>
+          <a href="/groups" class="btn btn-info mx-1 mb-2">Groups</a>
+          <a href="/videos" class="btn btn-outline-dark mx-1 mb-2">Tutorials</a>
+        </div>
+      </div>
+
+      <!-- Motivational Images (optional) -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <img src="{{ url_for('static', filename='Picture.png') }}" alt="Study Image 1" class="img-fluid rounded glass-bg">
+        </div>
+        <div class="col-md-4">
+          <img src="{{ url_for('static', filename='Picture(2).png') }}" alt="Study Image 2" class="img-fluid rounded glass-bg">
+        </div>
+        <div class="col-md-4">
+          <img src="{{ url_for('static', filename='Picture(3).png') }}" alt="Study Image 3" class="img-fluid rounded glass-bg">
+        </div>
+      </div>
+
+      <!-- Progress Bar and Streak -->
+      {% set completed = 0 %}
+      {% set total = tasks|length %}
+      {% for task in tasks %}
+        {% if task.completed %}{% set completed = completed + 1 %}{% endif %}
+      {% endfor %}
+      <div class="progress mb-3" style="height: 38px; border-radius: 2em; box-shadow: 0 2px 8px rgba(79,117,155,0.16); background: rgba(255,255,255,0.45);">
+        <div
+          class="progress-bar progress-bar-striped progress-bar-animated bg-info d-flex align-items-center"
+          id="progressbar-animated"
+          role="progressbar"
+          style="width: 0%; font-size: 1.15em; border-radius: 2em; transition: width 1.2s cubic-bezier(.7,0,.3,1);"
+        >
+          <span style="margin-left:1em;">
+            <span id="progress-icon" style="font-size:1.25em;">📈</span>
+            <span id="progress-label">0% Complete</span>
+          </span>
+        </div>
+      </div>
+      <div class="alert alert-success">
+        <strong>Task Streak:</strong> {{ streak or 0 }} days in a row!
+      </div>
+
+      <!-- AI-Powered Insights -->
+      {% if insight %}
+      <div class="alert alert-info mt-3">{{ insight|safe }}</div>
+      {% endif %}
+
+      <!-- Personalized Resources and Study Tip -->
+      {% if not needs_survey %}
+      <div class="alert alert-success fade show" id="resources-alert">
+        <strong>Your Personalized Resources:</strong>
+        <ul style="margin-bottom:0;">
+          {% if preferences.visual %}<li>Try our <span class="accent">flashcards</span> and diagram-based guides.</li>{% endif %}
+          {% if preferences.auditory %}<li>Check out recommended <span class="accent">podcasts</span> and audio lectures.</li>{% endif %}
+          {% if preferences.kinesthetic %}<li>Look for <span class="accent">hands-on projects</span> and practice problems.</li>{% endif %}
+          {% if preferences.prefers_flashcards %}<li>Review with <span class="accent">flashcards</span> for spaced repetition.</li>{% endif %}
+          {% if preferences.prefers_videos %}<li>Watch <span class="accent">video tutorials</span> for visual learning.</li>{% endif %}
+        </ul>
+      </div>
+      {% endif %}
+      <div class="alert alert-info fade show" id="tip-alert" style="font-size:1.2em;">
+        <strong>Today's Study Tip:</strong> {{ tip }}
+      </div>
+
+      <!-- Badges, Leaderboard, Focus Stats, Career Tip -->
+      {% if badges %}
+      <div class="mt-3">
+        <h5>Your Badges</h5>
+        <ul class="list-inline" id="badge-list">
+          {% for badge in badges %}
+          <li class="list-inline-item badge badge-pill badge-success py-2 px-3 badge-animate" style="font-size:1em;">{{ badge }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      {% if leaderboard %}
+      <div class="mt-4">
+        <h5>Leaderboard</h5>
+        <table class="table table-bordered table-sm w-auto mx-auto">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Username</th>
+              <th>Completed Tasks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in leaderboard %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.completed }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+      {% if focus_stats %}
+      <div class="alert alert-primary mt-3 animate__animated animate__fadeIn">
+        <strong>Focus Mode Stats:</strong>
+        Sessions: {{ focus_stats.sessions or 0 }}, Total Focus Time: {{ (focus_stats.total_time or 0) // 60 }} min
+      </div>
+      {% endif %}
+      {% if career_tip %}
+      <div class="alert alert-warning mt-3 animate__animated animate__fadeIn">
+        <strong>AI Career Guidance:</strong> {{ career_tip }}
+      </div>
+      {% endif %}
+
+      <!-- Event Calendar Widget -->
+      <div class="card mt-4" style="background:#A8F9FF;">
+        <div class="card-body">
+          <h5>Upcoming Events</h5>
+          <ul>
+            {% for event in events %}
+            <li>
+              <strong>{{ event.title }}</strong>
+              <br><small>{{ event.event_datetime[:16] }}</small>
+              <br><small>{{ event.description }}</small>
+            </li>
+            {% else %}
+            <li>No upcoming events. <a href="/groups">Add one in your group!</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Study Plan -->
+      <div class="card mt-4" style="background:#D0D6B5;">
+        <div class="card-body">
+          <h4>Your Study Plan</h4>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Due Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for task in tasks %}
+              <tr>
+                <td>{{ task.description }}</td>
+                <td>{{ task.due_date or "No due date" }}</td>
+                <td>
+                  {% if task.completed %}
+                    ✅
+                    {% if task.completed_at %}
+                      <br>
+                      <small style="color: #888;">{{ task.completed_at }}</small>
+                    {% endif %}
+                  {% else %}
+                    <form action="/complete_task" method="post" style="display:inline;">
+                      <input type="hidden" name="task_id" value="{{ task.id }}">
+                      <button class="btn btn-sm btn-success" type="submit">Mark as Done</button>
+                    </form>
+                  {% endif %}
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="3">No tasks yet. <a href="/add_task">Add one!</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Sidebar: Mood Check-Ins -->
+    <aside class="col-lg-3 pt-4">
+      <div class="card mb-4" style="background:#A8F9FF;">
+        <div class="card-body">
+          <h5>Your Mood Check-Ins</h5>
+          <ul class="list-group">
+            {% for checkin in checkins %}
+            <li class="list-group-item">
+              <strong>Mood:</strong> {{ checkin.mood }}/10 <br>
+              <small>{{ checkin.note or "" }}</small><br>
+              <small>{{ checkin.created_at }}</small>
+            </li>
+            {% else %}
+            <li class="list-group-item">No check-ins yet.</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+window.onload = function() {
+    var main = document.getElementById("dashboard-content");
+    if (main) {
+        setTimeout(function() {
+            main.style.opacity = 1;
+            main.style.transform = "translateY(0)";
+        }, 150);
+    }
+    var badges = document.querySelectorAll('.badge-animate');
+    badges.forEach(function(badge, i) {
+        setTimeout(function() {
+            badge.classList.add('animate__animated', 'animate__bounceIn');
+        }, 600 + i * 300);
+    });
+    var pb = document.getElementById('progressbar-animated');
+    var plabel = document.getElementById('progress-label');
+    var picon = document.getElementById('progress-icon');
+    var completed = {{ completed }};
+    var total = {{ total }};
+    var progress = total > 0 ? Math.floor(100 * (completed / total)) : 0;
+    var curr = 0;
+    var interval = setInterval(function() {
+        if (curr > progress) { clearInterval(interval); }
+        pb.style.width = curr + "%";
+        if (plabel) plabel.textContent = curr + "% Complete";
+        // Change color and icon based on % (fun reward!)
+        if (picon) {
+            if (curr >= 100) {
+                pb.classList.remove("bg-info");
+                pb.classList.add("bg-success");
+                picon.textContent = "🎉";
+            } else if (curr >= 75) {
+                pb.classList.remove("bg-info");
+                pb.classList.add("bg-success");
+                picon.textContent = "🚀";
+            } else if (curr >= 50) {
+                pb.classList.remove("bg-info");
+                pb.classList.add("bg-warning");
+                picon.textContent = "🔥";
+            } else {
+                pb.classList.remove("bg-success", "bg-warning");
+                pb.classList.add("bg-info");
+                picon.textContent = "📈";
+            }
+        }
+        curr++;
+    }, 15);
+    if (progress === 100) {
+        setTimeout(function() {
+            confetti({ particleCount: 120, spread: 70, origin: { y: 0.7 } });
+            showMascotMessage("🎉 All tasks complete! Amazing job!");
+        }, 1000);
+    }
+    setTimeout(function() {
+        var res = document.getElementById('resources-alert');
+        if (res) res.style.display = "none";
+        var tip = document.getElementById('tip-alert');
+        if (tip) tip.style.display = "none";
+    }, 7000);
+};
+function showMascotMessage(message) {
+    let popup = document.createElement('div');
+    popup.className = 'alert alert-info p-2 animate__animated animate__fadeInUp';
+    popup.style.position = 'fixed';
+    popup.style.bottom = '110px';
+    popup.style.left = '30px';
+    popup.style.zIndex = 1000;
+    popup.innerHTML = `<img src="/static/mascot.gif" style="height:32px;vertical-align:middle;"> ${message}`;
+    document.body.appendChild(popup);
+    setTimeout(() => { popup.classList.add('animate__fadeOutDown'); }, 2500);
+    setTimeout(() => { popup.remove(); }, 3500);
+}
+</script>
+{% endblock %}
+<div style="position: fixed; bottom: 10px; right: 10px; background: #333; color: white; padding: 10px; border-radius: 10px; z-index: 9999; font-size: 12px;">
+  <img src="/static/logo.png" style="height: 30px; display: inline-block; vertical-align: middle;">
+  <span style="display: inline-block; margin-left: 5px;">Logo loaded</span>
+</div>

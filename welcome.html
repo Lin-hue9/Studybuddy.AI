@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block main %}
+<div id="splash" class="d-flex flex-column align-items-center justify-content-center"
+     style="height:75vh; background: linear-gradient(135deg, #A8F9FF 0%, #9DBF9E 100%); border-radius: 1em;">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height:80px; margin-bottom:20px;">
+    <h1 class="mb-3" style="color:#4F759B; font-weight:700;">Hi there, future brainiac! 🌟</h1>
+    <h2 class="mb-2" style="color:#4F759B;">Welcome to <span style="color:#8AC6D0;">StudyBuddy AI</span>! 👋</h2>
+    <p class="lead text-center" style="max-width:400px;">
+        Let's crush those study goals together.<br>
+        Get personalized help, track progress, and make learning a breeze.<br>
+        <strong>Ready to unlock your potential?</strong>
+    </p>
+    <button class="btn btn-success btn-lg mt-4" id="getStartedBtn">Begin</button>
+</div>
+<script>
+document.getElementById("getStartedBtn").onclick = function() {
+    fadeSplash();
+};
+function fadeSplash() {
+    let splash = document.getElementById("splash");
+    splash.style.transition = "opacity 1s";
+    splash.style.opacity = 0;
+    setTimeout(function() {
+        window.location.href = "/onboarding_quiz";
+    }, 1000);
+}
+setTimeout(fadeSplash, 5000); // auto-fade after 5 sec
+</script>
+{% endblock %}

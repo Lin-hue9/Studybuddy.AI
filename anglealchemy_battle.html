@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block main %}
+<h2>{{ location.icon }} {{ location.monster }} Appears at {{ location.name }}</h2>
+{% if not answered %}
+ <div class="card glass-bg p-3 mb-4 text-center">
+   <p><b>Quiz Challenge:</b></p>
+   <form method="post">
+     <p style="font-size:1.2em;">{{ question.q }}</p>
+     {% for ans in question.a %}
+       <button name="answer" value="{{ ans }}" type="submit" class="btn btn-info m-2">{{ ans }}</button>
+     {% endfor %}
+     <input type="hidden" name="correct" value="{{ question.correct }}">
+   </form>
+ </div>
+{% else %}
+ <div class="alert alert-info text-center" style="font-size:1.2em;">{{ message }}</div>
+ <a href="{{ url_for('anglealchemy') }}" class="btn btn-primary">Return to Map</a>
+{% endif %}
+<p class="mt-4">Coins: <b>{{ coins }}</b> | Badges: <b>{{ badges|length }}</b></p>
+{% endblock %}

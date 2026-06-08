@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block main %}
+<h2>Add a Study Task</h2>
+<form action="/add_task" method="post">
+    <input name="description" placeholder="Task Description" class="form-control mb-2" type="text" required>
+    <input name="due_date" placeholder="Due Date (YYYY-MM-DD)" class="form-control mb-2" type="date">
+    <button class="btn btn-success" type="submit">Add Task</button>
+</form>
+{% endblock %}

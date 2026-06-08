@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block main %}
+<h2 style="color:#4F759B;">🌟 AngleAlchemy: The Realm of Academia</h2>
+<p>Coins: <b>{{ coins }}</b> | Badges: <b>{{ badges|length }}</b></p>
+<div style="margin-bottom:16px;">
+ {% for loc in locations %}
+   <a href="{{ url_for('anglealchemy_battle') }}?location={{ loc.name }}" class="btn btn-lg btn-primary mb-2">
+     {{ loc.icon }} {{ loc.name }}
+   </a>
+ {% endfor %}
+</div>
+{% if badges %}
+ <div>
+   <h5>Your Badges:</h5>
+   {% for badge in badges %}
+     <span class="badge badge-success">{{ badge }}</span>
+   {% endfor %}
+ </div>
+{% endif %}
+{% if story %}
+ <div class="mt-3">
+   <h5>Your Story Progress:</h5>
+   <ul>
+     {% for event in story %}
+       <li>{{ event }}</li>
+     {% endfor %}
+   </ul>
+ </div>
+{% endif %}
+<a href="{{ url_for('anglealchemy_reset') }}" class="btn btn-outline-danger btn-sm mt-3">Reset Progress</a>
+{% endblock %}
+
+

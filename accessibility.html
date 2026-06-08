@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block main %}
+<h2>Accessibility Settings</h2>
+<form>
+    <div class="mb-3">
+        <label><b>Font Size:</b></label>
+        <select class="form-control w-auto" onchange="document.body.style.fontSize=this.value;">
+            <option value="1em">Normal</option>
+            <option value="1.2em">Large</option>
+            <option value="1.4em">Extra Large</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label><b>Contrast:</b></label>
+        <button type="button" class="btn btn-outline-dark" onclick="document.body.classList.toggle('high-contrast')">Toggle High Contrast</button>
+    </div>
+    <div class="mb-3">
+        <label><b>Text-to-Speech:</b></label>
+        <button type="button" onclick="speakPage()" class="btn btn-secondary">Read This Page</button>
+    </div>
+</form>
+<script>
+function speakPage() {
+    let synth = window.speechSynthesis;
+    let text = document.body.innerText;
+    let utter = new SpeechSynthesisUtterance(text);
+    synth.speak(utter);
+}
+</script>
+{% endblock %}
